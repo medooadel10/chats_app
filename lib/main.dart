@@ -3,6 +3,7 @@ import 'package:chats_app/core/router/routes.dart';
 import 'package:chats_app/core/style/themes.dart';
 import 'package:chats_app/firebase_options.dart';
 import 'package:chats_app/features/login/ui/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: AppThemes.theme,
       onGenerateRoute: AppRouter().onGenerateRoute,
-      initialRoute: Routes.login,
+      initialRoute: Routes.splash,
     );
   }
 }

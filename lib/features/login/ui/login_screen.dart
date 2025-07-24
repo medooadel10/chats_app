@@ -1,4 +1,6 @@
+import 'package:chats_app/core/router/routes.dart';
 import 'package:chats_app/core/widgets/custom_button.dart';
+import 'package:chats_app/core/widgets/custom_text_button.dart';
 import 'package:chats_app/core/widgets/custom_text_field.dart';
 import 'package:chats_app/features/login/cubit/login_cubit.dart';
 import 'package:chats_app/features/login/cubit/login_state.dart';
@@ -34,6 +36,7 @@ class LoginScreen extends StatelessWidget {
               CustomTextField(
                 controller: cubit.passwordController,
                 hintText: 'Enter password',
+                obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter password';
@@ -61,12 +64,29 @@ class LoginScreen extends StatelessWidget {
                       Fluttertoast.showToast(
                         msg: 'You are logged in successfully',
                       );
-                      print(state.userCredential.user?.uid);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        Routes.conversations,
+                        (route) => false,
+                      );
                     case LoginErrorState():
                       Fluttertoast.showToast(msg: state.message);
                     default:
                   }
                 },
+              ),
+              Row(
+                spacing: 2,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Are you havent an account?'),
+                  CustomTextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, Routes.register);
+                    },
+                    text: 'Register',
+                  ),
+                ],
               ),
             ],
           ),
