@@ -13,3 +13,17 @@ final class MessageSendMessageErrorState extends MessagesState {
 
   MessageSendMessageErrorState(this.message);
 }
+
+final class MessageLoadingState extends MessagesState {}
+
+final class MessageErrorState extends MessagesState {
+  final String message;
+
+  MessageErrorState(this.message);
+}
+
+final class MessageSuccessState extends MessagesState {
+  final List<MessageModel> messages;
+
+  MessageSuccessState(this.messages);
+}

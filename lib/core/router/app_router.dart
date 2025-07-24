@@ -34,7 +34,9 @@ class AppRouter {
       case Routes.conversations:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ConversationsCubit()..getAllConversations(),
+            create: (context) => ConversationsCubit()
+              ..getAllConversations()
+              ..getProfile(),
             child: ConversationsScreen(),
           ),
         );
@@ -42,7 +44,7 @@ class AppRouter {
         final args = settings.arguments as ConversationModel;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => MessagesCubit(),
+            create: (context) => MessagesCubit()..getMessages(args),
             child: MessagesScreen(conversation: args),
           ),
         );
