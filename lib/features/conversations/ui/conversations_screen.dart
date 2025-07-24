@@ -34,26 +34,35 @@ class ConversationsScreen extends StatelessWidget {
           }
           return ListView.separated(
             padding: EdgeInsets.all(16),
-            itemBuilder: (context, index) => Row(
-              spacing: 10,
-              children: [
-                CircleAvatar(radius: 30, child: Icon(Icons.person)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cubit.conversations[index].name,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+            itemBuilder: (context, index) => GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.messages,
+                  arguments: cubit.conversations[index],
+                );
+              },
+              child: Row(
+                spacing: 10,
+                children: [
+                  CircleAvatar(radius: 30, child: Icon(Icons.person)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          cubit.conversations[index].name,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Text(cubit.conversations[index].email),
-                    ],
+                        Text(cubit.conversations[index].email),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             separatorBuilder: (context, index) => SizedBox(height: 16),
             itemCount: cubit.conversations.length,
