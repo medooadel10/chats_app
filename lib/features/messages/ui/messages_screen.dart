@@ -1,4 +1,3 @@
-import 'package:chats_app/core/widgets/custom_button.dart';
 import 'package:chats_app/core/widgets/custom_text_field.dart';
 import 'package:chats_app/features/conversations/models/conversation_model.dart';
 import 'package:chats_app/features/messages/cubit/messages_cubit.dart';
@@ -22,11 +21,13 @@ class MessagesScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           child: Column(
+            spacing: 16,
             children: [
               Expanded(
                 child: BlocBuilder<MessagesCubit, MessagesState>(
                   builder: (context, state) {
                     return ListView.separated(
+                      controller: cubit.scrollController,
                       itemBuilder: (context, index) {
                         final isSender =
                             FirebaseAuth.instance.currentUser!.uid ==
@@ -34,11 +35,14 @@ class MessagesScreen extends StatelessWidget {
 
                         return Container(
                           padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(right: isSender ? 40 : 0),
+                          margin: EdgeInsets.only(
+                            right: isSender ? 40 : 0,
+                            left: isSender ? 0 : 40,
+                          ),
                           decoration: BoxDecoration(
                             color: isSender
                                 ? Theme.of(context).colorScheme.primary
-                                : Colors.grey,
+                                : Colors.grey[200],
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(12),
                               topRight: Radius.circular(12),
@@ -63,9 +67,7 @@ class MessagesScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      isSender
-                                          ? cubit.messages[index].senderName
-                                          : cubit.messages[index].receiverName,
+                                      cubit.messages[index].messageContent,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 18,
@@ -78,11 +80,28 @@ class MessagesScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              if (isSender) ...[
+                                IconButton(
+                                  onPressed: () {
+                                    cubit.messageController.text =
+                                        cubit.messages[index].messageContent;
+                                    cubit.onEdit(cubit.messages[index].id);
+                                  },
+                                  icon: Icon(Icons.edit, color: Colors.red),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    cubit.deleteMessage(
+                                      cubit.messages[index].id,
+                                    );
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                ),
+                              ],
                             ],
                           ),
                         );
                       },
-
                       separatorBuilder: (context, index) =>
                           SizedBox(height: 12),
                       itemCount: cubit.messages.length,
@@ -113,7 +132,11 @@ class MessagesScreen extends StatelessWidget {
                       }
                       return IconButton(
                         onPressed: () {
-                          cubit.sendMessage(conversation);
+                          if (cubit.messageId != null) {
+                            cubit.updateMessage();
+                          } else {
+                            cubit.sendMessage(conversation);
+                          }
                         },
                         icon: Icon(
                           Icons.send,

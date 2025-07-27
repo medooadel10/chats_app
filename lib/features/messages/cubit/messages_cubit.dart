@@ -45,20 +45,53 @@ class MessagesCubit extends Cubit<MessagesState> {
     }
   }
 
-  final List<MessageModel> messages = [];
+  List<MessageModel> messages = [];
   void getMessages(ConversationModel conversation) async {
     emit(MessageLoadingState());
     final db = FirebaseFirestore.instance;
-    final response = await db
+    db.collection('Messages').snapshots().listen((event) {
+      final documents = event.docs;
+      List<MessageModel> allMessages = [];
+      for (var doc in documents) {
+        allMessages.add(MessageModel.fromMap(doc.data()));
+      }
+      final filteredMessages = allMessages.where(
+        (element) =>
+            (element.senderUid == FirebaseAuth.instance.currentUser!.uid &&
+                element.receiverUid == conversation.uid) ||
+            (element.receiverUid == FirebaseAuth.instance.currentUser!.uid &&
+                element.senderUid == conversation.uid),
+      );
+      messages = filteredMessages.toList();
+      if (!isClosed) emit(MessageSuccessState(messages));
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  final ScrollController scrollController = ScrollController();
+
+  void deleteMessage(String id) async {
+    await FirebaseFirestore.instance.collection('Messages').doc(id).delete();
+  }
+
+  void updateMessage() async {
+    await FirebaseFirestore.instance
         .collection('Messages')
-        .where('senderUid', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .where('receiverUid', isEqualTo: conversation.uid)
-        .get();
-    log(response.docs.length.toString());
-    final documents = response.docs;
-    for (var doc in documents) {
-      messages.add(MessageModel.fromMap(doc.data()));
-    }
-    emit(MessageSuccessState(messages));
+        .doc(messageId)
+        .update({'messageContent': messageController.text});
+
+    messageId = null;
+    messageController.text = '';
+    emit(MessageUpdateStatus(false));
+  }
+
+  String? messageId;
+  void onEdit(String id) {
+    messageId = id;
+    emit(MessageUpdateStatus(true));
   }
 }

@@ -27,3 +27,9 @@ final class MessageSuccessState extends MessagesState {
 
   MessageSuccessState(this.messages);
 }
+
+final class MessageUpdateStatus extends MessagesState {
+  final bool status;
+
+  MessageUpdateStatus(this.status);
+}
