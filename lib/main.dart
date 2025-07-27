@@ -1,15 +1,19 @@
+import 'dart:developer';
+
 import 'package:chats_app/core/router/app_router.dart';
 import 'package:chats_app/core/router/routes.dart';
+import 'package:chats_app/core/services/firebase_messaging.dart';
 import 'package:chats_app/core/style/themes.dart';
 import 'package:chats_app/firebase_options.dart';
-import 'package:chats_app/features/login/ui/login_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  log(await FirebaseMessaging.instance.getToken() ?? 'Null');
+  await FirebaseMessagingService().initialize();
   runApp(const MyApp());
 }
 

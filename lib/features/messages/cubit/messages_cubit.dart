@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:chats_app/core/models/user_model.dart';
+import 'package:chats_app/core/services/notifications_service.dart';
 import 'package:chats_app/features/conversations/models/conversation_model.dart';
 import 'package:chats_app/features/messages/models/message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,6 +39,16 @@ class MessagesCubit extends Cubit<MessagesState> {
           .doc(id.toString())
           .set(messageModel.toMap());
       emit(MessageSendMessageSuccessState());
+      final response = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(conversation.uid)
+          .get();
+      final String fcmToken = response.data()?['fcmToken'] ?? '';
+      NotificationsService.sendFcmNotification(
+        title: 'New message from ${conversation.name}',
+        body: messageModel.messageContent,
+        fcmToken: fcmToken,
+      );
     } on FirebaseException catch (e) {
       emit(MessageSendMessageErrorState(e.message ?? e.toString()));
     }
