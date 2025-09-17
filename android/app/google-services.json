@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349194885792",
+    "project_id": "doitly-39420",
+    "storage_bucket": "doitly-39420.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349194885792:android:124385813485abf83587c5",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDujJjC69U_9fkNnMMgJEDEe90hJId-NVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
